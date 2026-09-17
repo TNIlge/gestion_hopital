@@ -1,0 +1,30 @@
+services:
+  # 1. Base de données PostgreSQL avec pgvector
+  postgres-db:
+    image: ankane/pgvector:latest
+    container_name: hospital_db
+    environment:
+      POSTGRES_USER: hospital_user
+      POSTGRES_PASSWORD: hospital_password
+      POSTGRES_DB: hospital_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # 2. Outil de visualisation web pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: hospital_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@eilco.com
+      PGADMIN_DEFAULT_PASSWORD: admin_password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres-db
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
