@@ -1,10 +1,11 @@
 package com.eilco.ing2.hopital.backend.model;
 
 public enum StatutDemande {
-    EN_ATTENTE("En attente"),
     EN_COURS("En cours"),
+    ANALYSEE("Analysée"),
     VALIDEE("Validée"),
-    REFUSEE("Refusée");
+    REFUSEE("Refusée"),
+    TERMINEE("Terminée");
 
     private final String libelle;
 
