@@ -1,0 +1,309 @@
+<!-- Barre supérieure moderne avec retour élégant -->
+<header class="appointment-topbar">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a routerLink="/" class="btn-return-modern">
+      <span class="icon-bubble">
+        <i class="bi bi-arrow-left"></i>
+      </span>
+      <span class="return-text">Retour à l'accueil</span>
+    </a>
+
+    <a routerLink="/" class="d-flex align-items-center gap-2 text-decoration-none">
+      <div class="logo-slot-compact">
+        <img src="assets/images/logo.svg" alt="MediCare Logo">
+      </div>
+      <div class="brand-text-compact">Medi<span>Care</span></div>
+    </a>
+
+    <div class="d-none d-md-flex align-items-center gap-2 badge-service-online">
+      <span class="live-dot"></span>
+      <span>Secrétariat ouvert 24/7</span>
+    </div>
+  </div>
+</header>
+
+<main class="appointment-main-section py-5">
+  <div class="container">
+    <div class="appointment-container">
+      <!-- Carte principale du formulaire -->
+      <div class="appointment-card-wrapper">
+        <div class="card-accent-line"></div>
+
+        <div class="appointment-card-content p-4 p-md-5">
+          <!-- En-tête -->
+          <div class="text-center mb-5">
+            <div class="badge-eyebrow-pill mb-3">
+              <i class="bi bi-shield-check me-1"></i> ESPACE PATIENT SÉCURISÉ
+            </div>
+            <h1 class="page-title mb-2">Prendre un Rendez-vous Médical</h1>
+            <p class="page-subtitle text-muted">
+              Remplissez le formulaire ci-dessous pour planifier votre consultation avec nos spécialistes.
+            </p>
+
+            <!-- Fil d'étapes visuel -->
+            <div class="steps-progress-bar mt-4">
+              <div class="step-item active">
+                <span class="step-circle"><i class="bi bi-person-fill"></i></span>
+                <span class="step-label">1. Coordonnées</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step-item active">
+                <span class="step-circle"><i class="bi bi-hospital-fill"></i></span>
+                <span class="step-label">2. Consultation</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step-item">
+                <span class="step-circle"><i class="bi bi-check2-circle"></i></span>
+                <span class="step-label">3. Confirmation</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alerte succès -->
+          @if (successMessage) {
+            <div class="alert-modern alert-modern-success mb-4">
+              <div class="alert-icon-wrap">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div class="alert-body">
+                <h4 class="alert-title">Demande enregistrée avec succès !</h4>
+                <p class="alert-text mb-0">{{ successMessage }}</p>
+                @if (numeroDossier) {
+                  <div class="dossier-pill mt-3">
+                    <span class="text-muted small">Numéro de suivi officiel :</span>
+                    <strong class="dossier-code">{{ numeroDossier }}</strong>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Alerte erreur -->
+          @if (errorMessage) {
+            <div class="alert-modern alert-modern-danger mb-4">
+              <div class="alert-icon-wrap">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+              <div class="alert-body">
+                <h4 class="alert-title">Une attention est requise</h4>
+                <p class="alert-text mb-0">{{ errorMessage }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- Formulaire -->
+          <form [formGroup]="appointmentForm" (ngSubmit)="submit()" novalidate>
+            <!-- SECTION 1 : Patient -->
+            <div class="form-block mb-4">
+              <div class="form-block-header">
+                <div class="block-icon"><i class="bi bi-person-vcard"></i></div>
+                <div>
+                  <h3 class="block-title">Identité du patient</h3>
+                  <p class="block-desc">Informations nécessaires pour la création ou mise à jour de votre dossier médical.</p>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="lastName">
+                    Nom de famille <span class="star">*</span>
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-person input-icon"></i>
+                    <input
+                      type="text"
+                      id="lastName"
+                      class="form-control-modern"
+                      formControlName="lastName"
+                      placeholder="Ex : Dupont"
+                      autocomplete="family-name"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="firstName">
+                    Prénom <span class="star">*</span>
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-person input-icon"></i>
+                    <input
+                      type="text"
+                      id="firstName"
+                      class="form-control-modern"
+                      formControlName="firstName"
+                      placeholder="Ex : Jean"
+                      autocomplete="given-name"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="birthDate">
+                    Date de naissance <span class="star">*</span>
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-calendar-event input-icon"></i>
+                    <input
+                      type="date"
+                      id="birthDate"
+                      class="form-control-modern"
+                      formControlName="birthDate"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="socialSecurityNumber">
+                    Numéro de Sécurité Sociale <span class="star">*</span>
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-shield-lock input-icon"></i>
+                    <input
+                      type="text"
+                      id="socialSecurityNumber"
+                      class="form-control-modern font-monospace"
+                      formControlName="socialSecurityNumber"
+                      placeholder="nom-prenom-AAAAMMJJ"
+                      [class.input-invalid]="nssError && appointmentForm.get('socialSecurityNumber')?.touched"
+                    />
+                  </div>
+
+                  @if (nssError && appointmentForm.get('socialSecurityNumber')?.touched) {
+                    <div class="input-feedback-error">
+                      <i class="bi bi-exclamation-circle-fill me-1"></i>
+                      Invalide. Doit correspondre à : <code>{{ nssError.attendu }}</code>
+                    </div>
+                  } @else {
+                    <div class="input-feedback-hint">
+                      <i class="bi bi-info-circle me-1"></i>Format requis : <code>nom-prenom-AAAAMMJJ</code>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2 : Consultation -->
+            <div class="form-block mb-4">
+              <div class="form-block-header">
+                <div class="block-icon"><i class="bi bi-hospital"></i></div>
+                <div>
+                  <h3 class="block-title">Détails de la consultation</h3>
+                  <p class="block-desc">Sélectionnez le pôle médical et la date souhaitée pour votre rendez-vous.</p>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="department">
+                    Département médical <span class="star">*</span>
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-building input-icon"></i>
+                    <select
+                      id="department"
+                      class="form-select-modern"
+                      formControlName="department"
+                    >
+                      <option value="" disabled selected>Sélectionnez un département...</option>
+                      @for (dep of departments; track dep) {
+                        <option [value]="dep">{{ dep }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="specialty">
+                    Spécialité <span class="star">*</span>
+                    @if (loadingSpecialties) {
+                      <span class="spinner-border spinner-border-sm text-brand ms-2" role="status"></span>
+                    }
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-stethoscope input-icon"></i>
+                    <select
+                      id="specialty"
+                      class="form-select-modern"
+                      formControlName="specialty"
+                    >
+                      <option value="" disabled selected>
+                        {{ appointmentForm.get('department')?.value ? 'Sélectionnez la spécialité...' : 'Choisissez d\'abord un département' }}
+                      </option>
+                      @for (spec of specialties; track spec) {
+                        <option [value]="spec">{{ spec }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label-modern" for="desiredDate">
+                    Date souhaitée de rendez-vous <span class="star">*</span>
+                  </label>
+                  <div class="input-modern-wrap">
+                    <i class="bi bi-calendar3 input-icon"></i>
+                    <input
+                      type="date"
+                      id="desiredDate"
+                      class="form-control-modern"
+                      formControlName="desiredDate"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 3 : Motif -->
+            <div class="form-block mb-4">
+              <div class="form-block-header">
+                <div class="block-icon"><i class="bi bi-chat-left-text"></i></div>
+                <div>
+                  <h3 class="block-title">Motif de consultation</h3>
+                  <p class="block-desc">Précisez la raison de votre venue pour préparer au mieux la consultation.</p>
+                </div>
+              </div>
+
+              <div class="input-modern-wrap">
+                <textarea
+                  id="reason"
+                  class="form-control-modern textarea-modern"
+                  rows="3"
+                  formControlName="reason"
+                  placeholder="Décrivez brièvement vos symptômes ou la raison de cette consultation..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- FOOTER D'ACTION -->
+            <div class="form-actions-footer pt-3">
+              <div class="privacy-note">
+                <i class="bi bi-lock-fill text-success me-1"></i>
+                Données de santé protégées conformément au RGPD médical.
+              </div>
+
+              <div class="d-flex gap-3">
+                <a routerLink="/" class="btn-cancel-modern">
+                  Annuler
+                </a>
+                <button
+                  type="submit"
+                  class="btn-submit-modern"
+                  [disabled]="appointmentForm.invalid || submitting"
+                >
+                  @if (submitting) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Envoi en cours...
+                  } @else {
+                    <span>Confirmer la demande</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                  }
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

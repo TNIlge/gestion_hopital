@@ -1,0 +1,182 @@
+.logo-slot {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+}
+
+.logo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.nav-link {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  color: var(--brand);
+}
+
+.eyebrow {
+  letter-spacing: 0.02em;
+}
+
+/* Hero */
+.hero {
+  padding: 4rem 0 5rem;
+  background: var(--hero-bg);
+  overflow-x: clip;
+}
+
+.hero h1 {
+  max-width: 720px;
+  letter-spacing: -0.02em;
+}
+
+.hero .lead {
+  max-width: 620px;
+  font-size: 1.05rem;
+}
+
+.photos {
+  margin-top: 4rem;
+  gap: 1rem;
+}
+
+.photo {
+  margin: 0;
+  padding: 0.6rem;
+  background: var(--photo-frame);
+  border-radius: var(--radius-photo);
+  box-shadow: var(--shadow-photo);
+  width: 240px;
+}
+
+.photo img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: calc(var(--radius-photo) * 0.7);
+}
+
+.photo-main {
+  width: 270px;
+  z-index: 1;
+}
+
+.photo-main img {
+  height: 330px;
+}
+
+.tilt-left {
+  transform: rotate(calc(-1 * var(--photo-tilt))) translateX(1.5rem);
+}
+
+.tilt-right {
+  transform: rotate(var(--photo-tilt)) translateX(-1.5rem);
+}
+
+/* Sections */
+.section {
+  padding: 6rem 0;
+}
+
+.bg-soft {
+  background: var(--section-alt-bg);
+}
+
+/* Cartes spécialités (inspirées de card.png) */
+.spec-card {
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  transition: background-color 0.25s, color 0.25s, transform 0.25s;
+}
+
+.spec-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 1.3rem;
+  transition: background-color 0.25s, color 0.25s;
+}
+
+.spec-text,
+.spec-card li {
+  color: var(--muted);
+  transition: color 0.25s;
+}
+
+.spec-card li i {
+  color: var(--brand);
+}
+
+.spec-card:hover {
+  background: var(--card-hover-bg);
+  color: var(--card-hover-text);
+  transform: translateY(-4px);
+}
+
+.spec-card:hover .spec-icon {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.spec-card:hover .spec-text,
+.spec-card:hover li,
+.spec-card:hover li i {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Étapes */
+.step-num {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Footer */
+.footer {
+  background: var(--footer-bg);
+  color: var(--footer-text);
+}
+
+.footer a {
+  color: #fff;
+}
+
+.footer hr {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 767.98px) {
+  .photo {
+    width: 30%;
+  }
+
+  .photo img,
+  .photo-main img {
+    height: 160px;
+  }
+
+  .tilt-left,
+  .tilt-right {
+    transform: none;
+  }
+}

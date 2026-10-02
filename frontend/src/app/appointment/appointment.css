@@ -1,0 +1,465 @@
+/* ==========================================================================
+   DESIGN FORMULAIRE RENDEZ-VOUS - MEDICARE (MODERNE & ÉLÉGANT)
+   ========================================================================== */
+
+/* Topbar moderne avec bouton retour */
+.appointment-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(15, 110, 120, 0.08);
+  box-shadow: 0 4px 20px rgba(15, 110, 120, 0.04);
+  padding: 0.85rem 0;
+  transition: all 0.3s ease;
+}
+
+/* Bouton Retour ultra moderne & interactif */
+.btn-return-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 1.15rem 0.45rem 0.5rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: var(--ink, #1f2a30);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 1.5px solid rgba(15, 110, 120, 0.12);
+  box-shadow: 0 2px 10px rgba(15, 110, 120, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-return-modern .icon-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(15, 110, 120, 0.08);
+  color: var(--brand, #0f6e78);
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+
+.btn-return-modern:hover {
+  background: #ffffff;
+  color: var(--brand, #0f6e78);
+  border-color: var(--brand, #0f6e78);
+  transform: translateX(-4px);
+  box-shadow: 0 6px 18px rgba(15, 110, 120, 0.15);
+}
+
+.btn-return-modern:hover .icon-bubble {
+  background: var(--brand, #0f6e78);
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+/* Logo compact dans la topbar */
+.logo-slot-compact {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-slot-compact img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-text-compact {
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  color: var(--ink, #1f2a30);
+}
+
+.brand-text-compact span {
+  color: var(--brand, #0f6e78);
+}
+
+/* Badge service ouvert */
+.badge-service-online {
+  padding: 0.35rem 0.85rem;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  border-radius: 9999px;
+  color: #15803d;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Section principale */
+.appointment-main-section {
+  background: linear-gradient(180deg, #f0fafb 0%, #fbfdfd 50%, #ffffff 100%);
+  min-height: calc(100vh - 65px);
+}
+
+.appointment-container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Carte du formulaire */
+.appointment-card-wrapper {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 60px rgba(15, 110, 120, 0.09), 0 4px 16px rgba(31, 42, 48, 0.02);
+  border: 1px solid rgba(15, 110, 120, 0.08);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-accent-line {
+  height: 5px;
+  background: linear-gradient(90deg, #0f6e78 0%, #20b2aa 50%, #0f6e78 100%);
+}
+
+.badge-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  background: rgba(15, 110, 120, 0.09);
+  color: var(--brand, #0f6e78);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.page-title {
+  font-weight: 800;
+  color: var(--ink, #1f2a30);
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+/* Fil d'étapes visuel */
+.steps-progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  max-width: 520px;
+  margin: 1.5rem auto 0;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted, #64748b);
+}
+
+.step-item.active {
+  color: var(--brand, #0f6e78);
+}
+
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.step-item.active .step-circle {
+  background: var(--brand, #0f6e78);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 110, 120, 0.3);
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+}
+
+/* Blocs du formulaire */
+.form-block {
+  background: #ffffff;
+  border-radius: 1.15rem;
+  border: 1px solid rgba(15, 110, 120, 0.09);
+  padding: 1.75rem;
+  transition: all 0.25s ease;
+}
+
+.form-block:focus-within {
+  border-color: rgba(15, 110, 120, 0.25);
+  box-shadow: 0 6px 20px rgba(15, 110, 120, 0.04);
+}
+
+.form-block-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(15, 110, 120, 0.08);
+}
+
+.block-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(15, 110, 120, 0.08);
+  color: var(--brand, #0f6e78);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.block-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink, #1f2a30);
+  margin-bottom: 0.2rem;
+}
+
+.block-desc {
+  font-size: 0.85rem;
+  color: var(--muted, #64748b);
+  margin-bottom: 0;
+}
+
+/* Labels & inputs */
+.form-label-modern {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ink, #1f2a30);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.form-label-modern .star {
+  color: var(--brand, #0f6e78);
+}
+
+.input-modern-wrap {
+  position: relative;
+}
+
+.input-modern-wrap .input-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 1.05rem;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.form-control-modern,
+.form-select-modern {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1.5px solid #dbe6e8;
+  padding: 0.75rem 1rem 0.75rem 2.85rem;
+  font-size: 0.95rem;
+  color: var(--ink, #1f2a30);
+  background-color: #fbfdfd;
+  transition: all 0.2s ease;
+}
+
+.form-control-modern:focus,
+.form-select-modern:focus {
+  background-color: #ffffff;
+  border-color: var(--brand, #0f6e78);
+  box-shadow: 0 0 0 3.5px rgba(15, 110, 120, 0.16);
+  outline: none;
+}
+
+.input-modern-wrap:focus-within .input-icon {
+  color: var(--brand, #0f6e78);
+}
+
+.textarea-modern {
+  padding-left: 1rem !important;
+}
+
+/* Feedback NSS */
+.input-invalid {
+  border-color: #dc2626 !important;
+  background-color: #fffaf0 !important;
+}
+
+.input-feedback-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+.input-feedback-hint {
+  color: var(--muted, #64748b);
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+}
+
+/* Actions footer */
+.form-actions-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@media (min-width: 576px) {
+  .form-actions-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.privacy-note {
+  font-size: 0.85rem;
+  color: var(--muted, #64748b);
+  display: flex;
+  align-items: center;
+}
+
+.btn-cancel-modern {
+  padding: 0.75rem 1.4rem;
+  border-radius: 9999px;
+  color: var(--muted, #64748b);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-cancel-modern:hover {
+  color: var(--ink, #1f2a30);
+}
+
+.btn-submit-modern {
+  background: linear-gradient(135deg, #0f6e78 0%, #12828e 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.85rem;
+  border-radius: 9999px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 22px rgba(15, 110, 120, 0.25);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-submit-modern:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0b555d 0%, #0f6e78 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(15, 110, 120, 0.35);
+}
+
+.btn-submit-modern:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Alertes modernes */
+.alert-modern {
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.alert-modern-success {
+  background: #f0fdf4;
+  border: 1.5px solid rgba(22, 163, 74, 0.25);
+  color: #14532d;
+}
+
+.alert-modern-success .alert-icon-wrap {
+  color: #16a34a;
+  font-size: 1.5rem;
+}
+
+.alert-modern-danger {
+  background: #fef2f2;
+  border: 1.5px solid rgba(220, 38, 38, 0.25);
+  color: #7f1d1d;
+}
+
+.alert-modern-danger .alert-icon-wrap {
+  color: #dc2626;
+  font-size: 1.5rem;
+}
+
+.alert-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.dossier-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #ffffff;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.dossier-code {
+  color: #15803d;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 575.98px) {
+  .appointment-card-content {
+    padding: 1.5rem 1rem !important;
+  }
+  .form-block {
+    padding: 1.25rem 1rem;
+  }
+  .steps-progress-bar {
+    display: none;
+  }
+}
