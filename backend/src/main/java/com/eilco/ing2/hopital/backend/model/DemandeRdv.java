@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "demandes_rdv")
@@ -52,6 +53,26 @@ public class DemandeRdv {
     @Column(nullable = false, length = 30)
     private StatutDemande statut;
 
+    @Column(name = "motif_refus", columnDefinition = "TEXT")
+    private String motifRefus;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "medecin_id")
+    private Medecin medecin;
+
+    @Column(name = "date_consultation")
+    private LocalDate dateConsultation;
+
+    @Column(name = "heure_consultation")
+    private LocalTime heureConsultation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "statut_presence", length = 30)
+    private StatutPresence statutPresence;
+
+    @Column(name = "date_pointage")
+    private LocalDateTime datePointage;
+
     @Column(name = "date_creation", nullable = false, updatable = false)
     private LocalDateTime dateCreation;
 
@@ -62,6 +83,9 @@ public class DemandeRdv {
     public void prePersist() {
         if (this.statut == null) {
             this.statut = StatutDemande.EN_ATTENTE;
+        }
+        if (this.statutPresence == null) {
+            this.statutPresence = StatutPresence.NON_DEFINI;
         }
         if (this.dateCreation == null) {
             this.dateCreation = LocalDateTime.now();
