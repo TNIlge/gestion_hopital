@@ -1,0 +1,65 @@
+<main class="ecran">
+  <div class="carte">
+    <h1 class="h3 text-center mb-1">Connexion</h1>
+    <p class="text-secondary text-center small mb-4">Espace réservé au personnel de l'hôpital</p>
+
+    <div class="roles mb-4" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        [class.actif]="role() === 'MEDECIN'"
+        [attr.aria-selected]="role() === 'MEDECIN'"
+        (click)="choisirRole('MEDECIN')"
+      >
+        <i class="bi bi-heart-pulse me-2"></i>Médecin
+      </button>
+      <button
+        type="button"
+        role="tab"
+        [class.actif]="role() === 'SECRETAIRE'"
+        [attr.aria-selected]="role() === 'SECRETAIRE'"
+        (click)="choisirRole('SECRETAIRE')"
+      >
+        <i class="bi bi-clipboard2-check me-2"></i>Secrétariat
+      </button>
+    </div>
+
+    <form (ngSubmit)="seConnecter()" novalidate>
+      @if (role() === 'MEDECIN') {
+        <label for="matricule" class="form-label small fw-medium">Matricule</label>
+        <input
+          id="matricule"
+          name="matricule"
+          class="form-control mb-3"
+          placeholder="Ex. : MED-007"
+          autocomplete="username"
+          [ngModel]="matricule()"
+          (ngModelChange)="matricule.set($event)"
+        />
+      } @else {
+        <p class="small text-secondary mb-3">
+          Accédez à la liste des demandes pour les valider, les décliner et assigner un médecin.
+        </p>
+      }
+
+      @if (erreur()) {
+        <div class="alert alert-danger d-flex gap-2 small py-2">
+          <i class="bi bi-exclamation-triangle-fill"></i>{{ erreur() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-brand w-100 py-2"
+        [disabled]="(role() === 'MEDECIN' && !matricule().trim()) || envoi()"
+      >
+        @if (envoi()) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+        }
+        {{ role() === 'MEDECIN' ? 'Se connecter' : "Accéder à l'espace secrétariat" }}
+      </button>
+    </form>
+
+    <a routerLink="/" class="retour"><i class="bi bi-arrow-left me-1"></i>Retour à l'accueil</a>
+  </div>
+</main>

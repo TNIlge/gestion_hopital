@@ -1,0 +1,123 @@
+<app-entete-espace titre="Mon planning" largeurMax="1100px" />
+
+<main class="container-fluid page py-5">
+  @if (session(); as s) {
+    <div class="mb-4">
+      <h1 class="h2 mb-1">Bonjour Dr {{ s.prenom }} {{ s.nom }}</h1>
+      <p class="text-secondary mb-0">
+        {{ maintenant() | date: 'EEEE d MMMM y' }} · Matricule {{ s.matricule }}
+      </p>
+    </div>
+  }
+
+  <!-- Indicateurs du jour -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="indicateur">
+        <span class="valeur">{{ stats().total }}</span>
+        <span class="libelle"><i class="bi bi-calendar2-check me-1"></i>Rendez-vous aujourd'hui</span>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="indicateur">
+        <span class="valeur text-success">{{ stats().presents }}</span>
+        <span class="libelle"><i class="bi bi-person-check me-1"></i>Présents</span>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="indicateur">
+        <span class="valeur text-danger">{{ stats().absents }}</span>
+        <span class="libelle"><i class="bi bi-person-x me-1"></i>Absents</span>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="indicateur">
+        <span class="valeur text-brand">{{ stats().aPointer }}</span>
+        <span class="libelle"><i class="bi bi-hourglass-split me-1"></i>À pointer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Période -->
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    @for (p of periodes; track p.code) {
+      <button type="button" class="filtre" [class.actif]="periode() === p.code" (click)="periode.set(p.code)">
+        {{ p.libelle }}
+      </button>
+    }
+  </div>
+
+  @if (chargement()) {
+    <div class="carte etat"><div class="spinner-border text-brand" role="status"></div></div>
+  } @else if (erreurChargement()) {
+    <div class="carte etat">
+      <p class="mb-3">Impossible de charger votre planning. Vérifiez que le backend est démarré.</p>
+      <button class="btn btn-brand btn-sm" (click)="charger()">Réessayer</button>
+    </div>
+  } @else if (groupes().length === 0) {
+    <div class="carte etat text-secondary">
+      <i class="bi bi-calendar-x fs-2 d-block mb-2"></i>Aucun rendez-vous sur cette période
+    </div>
+  } @else {
+    @for (g of groupes(); track g.jour) {
+      @if (periode() !== 'AUJOURDHUI') {
+        <h2 class="jour">{{ g.jour | date: 'EEEE d MMMM' }}</h2>
+      }
+      <div class="carte mb-4">
+        @for (r of g.rendezVous; track r.id) {
+          <div class="rdv" [class.en-consultation]="etat(r) === 'EN_CONSULTATION'">
+            <div class="heure">{{ hhmm(r.heureConsultation) }}</div>
+
+            <div class="flex-grow-1 min-w-0">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <span class="fw-semibold">{{ r.prenomPatient }} {{ r.nomPatient }}</span>
+                @switch (etat(r)) {
+                  @case ('EN_CONSULTATION') {
+                    <span class="badge rounded-pill text-bg-primary">En consultation</span>
+                  }
+                  @case ('A_VENIR') {
+                    <span class="badge rounded-pill text-bg-light">À venir</span>
+                  }
+                  @default {
+                    <span class="badge rounded-pill text-bg-secondary">Terminé</span>
+                  }
+                }
+              </div>
+              <div class="small text-secondary">{{ r.motif }}</div>
+              <div class="small text-secondary">{{ r.numeroDossier }} · {{ r.specialite }}</div>
+            </div>
+
+            <div class="pointage" role="group" aria-label="Présence du patient">
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-success]="r.statutPresence === 'PRESENT'"
+                [class.btn-outline-success]="r.statutPresence !== 'PRESENT'"
+                [disabled]="etat(r) === 'A_VENIR'"
+                (click)="pointer(r, 'PRESENT')"
+              >
+                <i class="bi bi-check-lg me-1"></i>Présent
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-danger]="r.statutPresence === 'ABSENT'"
+                [class.btn-outline-danger]="r.statutPresence !== 'ABSENT'"
+                [disabled]="etat(r) === 'A_VENIR'"
+                (click)="pointer(r, 'ABSENT')"
+              >
+                <i class="bi bi-x-lg me-1"></i>Absent
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</main>
+
+@if (notification()) {
+  <div class="toast show notification text-bg-dark border-0" role="status">
+    <div class="toast-body"><i class="bi bi-check-circle me-2"></i>{{ notification() }}</div>
+  </div>
+}

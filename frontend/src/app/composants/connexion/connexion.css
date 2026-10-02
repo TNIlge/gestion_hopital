@@ -1,0 +1,66 @@
+.ecran {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: var(--section-alt-bg);
+}
+
+.carte {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem 2rem;
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* Choix du rôle */
+.roles {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  background: var(--section-alt-bg);
+}
+
+.roles button {
+  flex: 1;
+  padding: 0.55rem;
+  border: 0;
+  border-radius: 0.6rem;
+  background: none;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.roles button.actif {
+  background: var(--surface);
+  color: var(--brand);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+}
+
+.form-control {
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-btn);
+}
+
+.form-control:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 0.2rem var(--brand-soft);
+}
+
+.retour {
+  display: block;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.retour:hover {
+  color: var(--brand);
+}
