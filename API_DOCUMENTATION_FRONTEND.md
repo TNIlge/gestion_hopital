@@ -89,7 +89,7 @@ Permet à un patient d'enregistrer sa demande.
 ```json
 {
   "numeroDossier": "RDV-202610-8A7F1B",
-  "statut": "En cours",
+  "statut": "En attente",
   "nom": "Dupont",
   "prenom": "Jean",
   "departement": "Services Cardiologiques",
@@ -112,7 +112,7 @@ Permet au patient de consulter le statut courant de sa demande grâce à son ide
 ```json
 {
   "numeroDossier": "RDV-202610-8A7F1B",
-  "statut": "Validée",
+  "statut": "Acceptée",
   "nom": "Dupont",
   "prenom": "Jean",
   "departement": "Services Cardiologiques",
@@ -126,7 +126,7 @@ Permet au patient de consulter le statut courant de sa demande grâce à son ide
   "motifRefus": null
 }
 ```
-*(Si le statut est "Refusée", le champ `motifRefus` contient la justification de la secrétaire).*
+*(Si le statut est "Déclinée", le champ `motifRefus` contient la justification de la secrétaire).*
 
 ---
 
@@ -138,11 +138,11 @@ Tableau de bord de triage avec filtres optionnels combinables.
 * **Méthode** : `GET`
 * **URL** : `/api/v1/secretariat/demandes`
 * **Paramètres de requête optionnels** :
-  * `statut` : `EN_COURS`, `ANALYSEE`, `VALIDEE`, `REFUSEE`, `TERMINEE`
+  * `statut` : `EN_ATTENTE`, `ACCEPTEE`, `DECLINEE`
   * `specialite` : ex. `Cardiologie interventionnelle`
   * `date` : `YYYY-MM-DD`
 * **Exemple d'appel** :
-  `GET /api/v1/secretariat/demandes?statut=EN_COURS&specialite=Cardiologie+interventionnelle`
+  `GET /api/v1/secretariat/demandes?statut=EN_ATTENTE&specialite=Cardiologie+interventionnelle`
 * **Réponse (HTTP 200)** :
 ```json
 [
@@ -157,8 +157,8 @@ Tableau de bord de triage avec filtres optionnels combinables.
     "specialite": "Cardiologie interventionnelle",
     "dateSouhaitee": "2026-10-04",
     "motif": "Douleurs thoraciques lors de l'effort",
-    "statut": "EN_COURS",
-    "statutLibelle": "En cours",
+    "statut": "EN_ATTENTE",
+    "statutLibelle": "En attente",
     "motifRefus": null,
     "medecinId": null,
     "medecinMatricule": null,
@@ -175,14 +175,14 @@ Tableau de bord de triage avec filtres optionnels combinables.
 
 ---
 
-### 📌 Passer une demande au statut "Analysée" (CARE-203)
+### 📌 Passer une demande au statut "En attente" (CARE-203)
 * **Méthode** : `PATCH`
 * **URL** : `/api/v1/secretariat/demandes/{id}/analyser`
-* **Réponse (HTTP 200)** : Renvoie l'objet demande avec `statut: "ANALYSEE"`.
+* **Réponse (HTTP 200)** : Renvoie l'objet demande avec `statut: "EN_ATTENTE"`.
 
 ---
 
-### 📌 Refuser une demande avec motif obligatoire (CARE-203)
+### 📌 Décliner / Refuser une demande avec motif obligatoire (CARE-203)
 * **Méthode** : `PATCH`
 * **URL** : `/api/v1/secretariat/demandes/{id}/refuser`
 * **Corps de la requête (Request Body)** :
@@ -191,7 +191,7 @@ Tableau de bord de triage avec filtres optionnels combinables.
   "motifRefus": "Dossier incomplet : ordonnance manquante ou indisponibilité sur ce créneau"
 }
 ```
-* **Réponse (HTTP 200)** : Renvoie l'objet demande avec `statut: "REFUSEE"` et le `motifRefus`.
+* **Réponse (HTTP 200)** : Renvoie l'objet demande avec `statut: "DECLINEE"` et le `motifRefus`.
 * **Erreur (HTTP 400)** si le motif est omis ou vide.
 
 ---
@@ -242,7 +242,7 @@ Applique l'algorithme anti-conflit d'horaires. Si le médecin a déjà une consu
 }
 ```
 * **Réponse en cas de succès (HTTP 200)** :
-Renvoie la demande avec `statut: "VALIDEE"`, `dateConsultation: "2026-10-15"` et `heureConsultation: "14:30"`.
+Renvoie la demande avec `statut: "ACCEPTEE"`, `dateConsultation: "2026-10-15"` et `heureConsultation: "14:30"`.
 * **Réponse en cas de conflit d'agenda (HTTP 400 Bad Request)** :
 ```json
 {
@@ -279,7 +279,7 @@ Renvoie la demande avec `statut: "VALIDEE"`, `dateConsultation: "2026-10-15"` et
 ---
 
 ### 📌 Consulter "Mon Planning" (CARE-302, CARE-303)
-> **Étanchéité stricte** : Ne renvoie QUE les consultations validées du médecin connecté (exclut les dossiers des confrères et les statuts 'En cours' ou 'Refusée').
+> **Étanchéité stricte** : Ne renvoie QUE les consultations acceptées du médecin connecté (exclut les dossiers des confrères et les statuts 'En attente' ou 'Déclinée').
 
 * **Méthode** : `GET`
 * **URL** : `/api/v1/medecin/{matricule}/planning`
@@ -298,7 +298,7 @@ Renvoie la demande avec `statut: "VALIDEE"`, `dateConsultation: "2026-10-15"` et
     "dateConsultation": "2026-10-15",
     "heureConsultation": "14:30",
     "specialite": "Cardiologie interventionnelle",
-    "statut": "Validée",
+    "statut": "Acceptée",
     "statutPresence": "NON_DEFINI",
     "datePointage": null
   }
@@ -329,7 +329,7 @@ Renvoie la demande avec `statut: "VALIDEE"`, `dateConsultation: "2026-10-15"` et
   "dateConsultation": "2026-10-15",
   "heureConsultation": "14:30",
   "specialite": "Cardiologie interventionnelle",
-  "statut": "Terminée",
+  "statut": "Acceptée",
   "statutPresence": "PRESENT",
   "datePointage": "2026-10-15T14:45:00"
 }
@@ -356,9 +356,9 @@ Le backend peuple automatiquement une base de test au démarrage (`DataInitializ
 | **MED-017** | Dr. Guillaume Lambert | Services de Chirurgie Générale | Chirurgie de provenance |
 
 ### Dossiers de démonstration pour le suivi patient
-* `RDV-202610-A1B2C3` : Demande au statut **En cours**
-* `RDV-202610-D4E5F6` : Demande au statut **Analysée**
-* `RDV-202610-G7H8I9` : Demande au statut **Validée** (Dr. Pierre Lefebvre, `MED-007`)
+* `RDV-202610-A1B2C3` : Demande au statut **En attente**
+* `RDV-202610-D4E5F6` : Demande au statut **Déclinée**
+* `RDV-202610-G7H8I9` : Demande au statut **Acceptée** (Dr. Pierre Lefebvre, `MED-007`)
 
 ---
 
@@ -374,7 +374,7 @@ export interface ReferentielDepartement {
 }
 
 // Statuts
-export type StatutDemande = 'EN_COURS' | 'ANALYSEE' | 'VALIDEE' | 'REFUSEE' | 'TERMINEE';
+export type StatutDemande = 'EN_ATTENTE' | 'ACCEPTEE' | 'DECLINEE';
 export type StatutPresence = 'NON_DEFINI' | 'PRESENT' | 'ABSENT';
 
 // Demande Patient (Création)

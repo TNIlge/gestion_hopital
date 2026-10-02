@@ -24,11 +24,21 @@ public class DataInitializer implements CommandLineRunner {
 
     private final MedecinRepository medecinRepository;
     private final DemandeRdvRepository demandeRdvRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) {
+        nettoyerContraintesObsoletes();
         initialiserMedecins();
         initialiserDemandesExemples();
+    }
+
+    private void nettoyerContraintesObsoletes() {
+        try {
+            jdbcTemplate.execute("ALTER TABLE demandes_rdv DROP CONSTRAINT IF EXISTS demandes_rdv_statut_check");
+        } catch (Exception e) {
+            log.debug("Vérification contrainte: {}", e.getMessage());
+        }
     }
 
     private void initialiserMedecins() {
