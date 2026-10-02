@@ -74,6 +74,9 @@ h2 {
   --bs-btn-hover-border-color: var(--brand-dark);
   --bs-btn-active-bg: var(--brand-dark);
   --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--brand);
+  --bs-btn-disabled-border-color: var(--brand);
 }
 
 .btn-outline-brand {

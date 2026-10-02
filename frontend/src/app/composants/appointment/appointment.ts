@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -10,8 +10,8 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { appointmentService } from '../services/appointment';
-import { AppointmentRequest } from '../models/appointment-request';
+import { appointmentService } from '../../services/appointment';
+import { AppointmentRequest } from '../../models/appointment-request';
 
 @Component({
   selector: 'app-appointment',
@@ -34,7 +34,9 @@ export class Appointment implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private appointmentService: appointmentService
+    private appointmentService: appointmentService,
+    // Application sans zone.js : on signale les mises à jour faites dans les callbacks HTTP
+    private cdr: ChangeDetectorRef
   ) {}
 
   get nssError(): { attendu: string; saisi: string } | null {
@@ -67,10 +69,12 @@ export class Appointment implements OnInit {
     this.appointmentService.getDepartments().subscribe({
       next: (data) => {
         this.departments = data;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         this.errorMessage = "Impossible de charger les départements depuis le serveur.";
         console.error("Erreur chargement départements", error);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -90,12 +94,14 @@ export class Appointment implements OnInit {
             next: (data) => {
               this.specialties = data;
               this.loadingSpecialties = false;
+              this.cdr.markForCheck();
             },
             error: (error) => {
               this.errorMessage = "Impossible de charger les spécialités pour ce département.";
               console.error("Erreur chargement spécialités", error);
               this.specialties = [];
               this.loadingSpecialties = false;
+              this.cdr.markForCheck();
             },
           });
         } else {
@@ -170,6 +176,7 @@ export class Appointment implements OnInit {
           response?.message || "Votre demande de rendez-vous a été enregistrée avec succès !";
         this.appointmentForm.reset();
         this.specialties = [];
+        this.cdr.markForCheck();
       },
       error: (error) => {
         this.submitting = false;
@@ -182,6 +189,7 @@ export class Appointment implements OnInit {
           this.errorMessage = "Une erreur est survenue lors de l'enregistrement de votre rendez-vous.";
         }
         console.error("Erreur soumission", error);
+        this.cdr.markForCheck();
       },
     });
   }
