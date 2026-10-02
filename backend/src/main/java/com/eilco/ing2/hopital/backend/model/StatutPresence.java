@@ -1,13 +1,13 @@
 package com.eilco.ing2.hopital.backend.model;
 
-public enum StatutDemande {
-    EN_ATTENTE("En attente"),
-    ACCEPTEE("Acceptée"),
-    DECLINEE("Déclinée");
+public enum StatutPresence {
+    NON_DEFINI("Non défini"),
+    PRESENT("Présent"),
+    ABSENT("Absent");
 
     private final String libelle;
 
-    StatutDemande(String libelle) {
+    StatutPresence(String libelle) {
         this.libelle = libelle;
     }
 
