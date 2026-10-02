@@ -84,9 +84,9 @@ public class DemandeRdvServiceImpl implements DemandeRdvService {
                 .dateSouhaitee(demande.getDateSouhaitee())
                 .dateCreation(demande.getDateCreation());
 
-        if (demande.getStatut() == StatutDemande.REFUSEE) {
+        if (demande.getStatut() == StatutDemande.DECLINEE) {
             builder.motifRefus(demande.getMotifRefus());
-        } else if (demande.getStatut() == StatutDemande.VALIDEE || demande.getStatut() == StatutDemande.TERMINEE) {
+        } else if (demande.getStatut() == StatutDemande.ACCEPTEE) {
             if (demande.getMedecin() != null) {
                 builder.medecinNom("Dr. " + demande.getMedecin().getPrenom() + " " + demande.getMedecin().getNom());
                 builder.medecinSpecialite(demande.getMedecin().getSpecialite());

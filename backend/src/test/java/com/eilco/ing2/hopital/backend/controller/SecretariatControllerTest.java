@@ -66,7 +66,7 @@ class SecretariatControllerTest {
                 .specialite("Cardiologie interventionnelle")
                 .dateSouhaitee(LocalDate.now().plusDays(5))
                 .motif("Consultation test secrétariat")
-                .statut(StatutDemande.EN_COURS)
+                .statut(StatutDemande.EN_ATTENTE)
                 .dateCreation(LocalDateTime.now())
                 .build());
     }
@@ -75,7 +75,7 @@ class SecretariatControllerTest {
     @DisplayName("CARE-201 & CARE-202 : Listing des demandes avec filtre par statut")
     void testGetDemandesAvecFiltre() throws Exception {
         mockMvc.perform(get("/api/v1/secretariat/demandes")
-                        .param("statut", "EN_COURS")
+                        .param("statut", "EN_ATTENTE")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", isA(java.util.List.class)))
@@ -83,16 +83,7 @@ class SecretariatControllerTest {
     }
 
     @Test
-    @DisplayName("CARE-203 : Passage au statut 'Analysée' via PATCH")
-    void testPasserEnAnalysee() throws Exception {
-        mockMvc.perform(patch("/api/v1/secretariat/demandes/" + testDemande.getId() + "/analyser")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statut", is("ANALYSEE")));
-    }
-
-    @Test
-    @DisplayName("CARE-203 : Refus d'une demande avec motif via PATCH")
+    @DisplayName("CARE-203 : Refus d'une demande avec motif via PATCH (Déclinée)")
     void testRefuserDemande() throws Exception {
         String jsonRefus = "{\"motifRefus\":\"Créneau non disponible ce mois-ci\"}";
 
@@ -100,7 +91,7 @@ class SecretariatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRefus))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statut", is("REFUSEE")))
+                .andExpect(jsonPath("$.statut", is("DECLINEE")))
                 .andExpect(jsonPath("$.motifRefus", is("Créneau non disponible ce mois-ci")));
     }
 
@@ -116,7 +107,7 @@ class SecretariatControllerTest {
     }
 
     @Test
-    @DisplayName("CARE-205 & CARE-206 : Affectation médecin et gestion anti-conflit")
+    @DisplayName("CARE-205 & CARE-206 : Affectation médecin et gestion anti-conflit (Acceptée)")
     void testAffectationEtAntiConflit() throws Exception {
         LocalDate date = LocalDate.now().plusDays(25);
         String jsonAffectation = String.format(
@@ -129,7 +120,7 @@ class SecretariatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonAffectation))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statut", is("VALIDEE")));
+                .andExpect(jsonPath("$.statut", is("ACCEPTEE")));
 
         // 2. Création d'une deuxième demande
         DemandeRdv demande2 = demandeRdvRepository.save(DemandeRdv.builder()
@@ -141,7 +132,7 @@ class SecretariatControllerTest {
                 .departement("Services Cardiologiques")
                 .specialite("Cardiologie interventionnelle")
                 .dateSouhaitee(date)
-                .statut(StatutDemande.EN_COURS)
+                .statut(StatutDemande.EN_ATTENTE)
                 .dateCreation(LocalDateTime.now())
                 .build());
 

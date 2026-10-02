@@ -74,7 +74,7 @@ public class SecretariatServiceImpl implements SecretariatService {
         DemandeRdv demande = demandeRdvRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Demande de rendez-vous introuvable avec l'ID : " + id));
 
-        demande.setStatut(StatutDemande.ANALYSEE);
+        demande.setStatut(StatutDemande.EN_ATTENTE);
         DemandeRdv saved = demandeRdvRepository.save(demande);
         return mapToAdminDto(saved);
     }
@@ -86,10 +86,10 @@ public class SecretariatServiceImpl implements SecretariatService {
                 .orElseThrow(() -> new ResourceNotFoundException("Demande de rendez-vous introuvable avec l'ID : " + id));
 
         if (requestDto == null || requestDto.getMotifRefus() == null || requestDto.getMotifRefus().trim().isEmpty()) {
-            throw new BusinessValidationException("Le passage à 'Refusée' exige un motif explicite enregistré en BDD.");
+            throw new BusinessValidationException("Le passage à 'Déclinée' exige un motif explicite enregistré en BDD.");
         }
 
-        demande.setStatut(StatutDemande.REFUSEE);
+        demande.setStatut(StatutDemande.DECLINEE);
         demande.setMotifRefus(requestDto.getMotifRefus().trim());
         DemandeRdv saved = demandeRdvRepository.save(demande);
         return mapToAdminDto(saved);
@@ -130,7 +130,7 @@ public class SecretariatServiceImpl implements SecretariatService {
                 medecin.getId(),
                 requestDto.getDateConsultation(),
                 requestDto.getHeureConsultation(),
-                StatutDemande.VALIDEE,
+                StatutDemande.ACCEPTEE,
                 demandeId
         );
 
@@ -140,11 +140,11 @@ public class SecretariatServiceImpl implements SecretariatService {
             );
         }
 
-        // CARE-206 : Passation au Statut "Validée" et Association Formelle
+        // CARE-206 : Passation au Statut "Acceptée" et Association Formelle
         demande.setMedecin(medecin);
         demande.setDateConsultation(requestDto.getDateConsultation());
         demande.setHeureConsultation(requestDto.getHeureConsultation());
-        demande.setStatut(StatutDemande.VALIDEE);
+        demande.setStatut(StatutDemande.ACCEPTEE);
 
         DemandeRdv saved = demandeRdvRepository.save(demande);
         return mapToAdminDto(saved);

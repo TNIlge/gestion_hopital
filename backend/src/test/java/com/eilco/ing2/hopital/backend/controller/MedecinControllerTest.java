@@ -65,7 +65,7 @@ class MedecinControllerTest {
                 .departement("Services d'Urgences")
                 .specialite("Urgence adulte")
                 .dateSouhaitee(LocalDate.now())
-                .statut(StatutDemande.VALIDEE)
+                .statut(StatutDemande.ACCEPTEE)
                 .medecin(medecinTest)
                 .dateConsultation(LocalDate.now())
                 .heureConsultation(LocalTime.of(10, 0))
@@ -105,6 +105,6 @@ class MedecinControllerTest {
                         .content(jsonPresence))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statutPresence", is("PRESENT")))
-                .andExpect(jsonPath("$.statut", is("Terminée")));
+                .andExpect(jsonPath("$.statut", is("Acceptée")));
     }
 }

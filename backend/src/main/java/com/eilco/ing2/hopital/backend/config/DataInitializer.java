@@ -78,7 +78,7 @@ public class DataInitializer implements CommandLineRunner {
 
         Medecin medecinCardio = medecinRepository.findByMatricule("MED-007").orElse(null);
 
-        // 1. Demande 'En cours' (non traitée)
+        // 1. Demande 'En attente' (non traitée)
         DemandeRdv demande1 = DemandeRdv.builder()
                 .numeroDossier("RDV-202610-A1B2C3")
                 .nom("Martin")
@@ -89,13 +89,13 @@ public class DataInitializer implements CommandLineRunner {
                 .specialite("Cardiologie interventionnelle")
                 .dateSouhaitee(LocalDate.now().plusDays(3))
                 .motif("Douleurs thoraciques lors de l'effort")
-                .statut(StatutDemande.EN_COURS)
+                .statut(StatutDemande.EN_ATTENTE)
                 .statutPresence(StatutPresence.NON_DEFINI)
                 .dateCreation(LocalDateTime.now().minusHours(4))
                 .dateMiseAJour(LocalDateTime.now().minusHours(4))
                 .build();
 
-        // 2. Demande 'Analysée' par le secrétariat
+        // 2. Demande 'Déclinée' par le secrétariat
         DemandeRdv demande2 = DemandeRdv.builder()
                 .numeroDossier("RDV-202610-D4E5F6")
                 .nom("Bernard")
@@ -106,13 +106,14 @@ public class DataInitializer implements CommandLineRunner {
                 .specialite("Urgence traumatologique")
                 .dateSouhaitee(LocalDate.now().plusDays(1))
                 .motif("Contusion cheville droite suite à chute")
-                .statut(StatutDemande.ANALYSEE)
+                .motifRefus("Créneau non disponible ce jour")
+                .statut(StatutDemande.DECLINEE)
                 .statutPresence(StatutPresence.NON_DEFINI)
                 .dateCreation(LocalDateTime.now().minusHours(2))
                 .dateMiseAJour(LocalDateTime.now().minusHours(1))
                 .build();
 
-        // 3. Demande 'Validée' avec médecin affecté et créneau fixé
+        // 3. Demande 'Acceptée' avec médecin affecté et créneau fixé
         DemandeRdv demande3 = DemandeRdv.builder()
                 .numeroDossier("RDV-202610-G7H8I9")
                 .nom("Dubois")
@@ -123,7 +124,7 @@ public class DataInitializer implements CommandLineRunner {
                 .specialite("Cardiologie interventionnelle")
                 .dateSouhaitee(LocalDate.now().plusDays(2))
                 .motif("Contrôle annuel post-opératoire")
-                .statut(StatutDemande.VALIDEE)
+                .statut(StatutDemande.ACCEPTEE)
                 .medecin(medecinCardio)
                 .dateConsultation(LocalDate.now().plusDays(2))
                 .heureConsultation(LocalTime.of(14, 30))

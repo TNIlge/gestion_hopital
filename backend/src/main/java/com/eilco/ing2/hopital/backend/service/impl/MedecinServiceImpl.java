@@ -79,18 +79,17 @@ public class MedecinServiceImpl implements MedecinService {
         DemandeRdv rdv = demandeRdvRepository.findById(rendezVousId)
                 .orElseThrow(() -> new ResourceNotFoundException("Consultation introuvable avec l'ID : " + rendezVousId));
 
-        if (rdv.getStatut() != StatutDemande.VALIDEE && rdv.getStatut() != StatutDemande.TERMINEE) {
-            throw new BusinessValidationException("Seul un rendez-vous validé peut faire l'objet d'un pointage de présence.");
+        if (rdv.getStatut() != StatutDemande.ACCEPTEE) {
+            throw new BusinessValidationException("Seul un rendez-vous accepté peut faire l'objet d'un pointage de présence.");
         }
 
         if (requestDto == null || requestDto.getPresence() == null) {
             throw new BusinessValidationException("Le statut de présence est obligatoire (PRESENT ou ABSENT).");
         }
 
-        // CARE-304 : Mise à jour du statut de présence et clôture
+        // CARE-304 : Mise à jour du statut de présence
         rdv.setStatutPresence(requestDto.getPresence());
         rdv.setDatePointage(LocalDateTime.now());
-        rdv.setStatut(StatutDemande.TERMINEE); // Clôture et archivage de la prise en charge
 
         DemandeRdv saved = demandeRdvRepository.save(rdv);
         return mapToPlanningDto(saved);

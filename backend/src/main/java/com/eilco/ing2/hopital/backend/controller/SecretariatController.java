@@ -25,7 +25,7 @@ public class SecretariatController {
 
     /**
      * CARE-201 & CARE-202 : Tableau de bord secrétariat avec vue globale et filtres multi-critères.
-     * Exemple : GET /api/v1/secretariat/demandes?statut=EN_COURS&specialite=Cardiologie+interventionnelle
+     * Exemple : GET /api/v1/secretariat/demandes?statut=EN_ATTENTE&specialite=Cardiologie+interventionnelle
      */
     @GetMapping("/demandes")
     public ResponseEntity<List<DemandeRdvAdminDto>> getDemandes(

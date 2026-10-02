@@ -67,7 +67,7 @@ class MedecinServiceTest {
                 .nom("Dubois")
                 .prenom("Emma")
                 .dateNaissance(LocalDate.of(1998, 3, 8))
-                .statut(StatutDemande.VALIDEE)
+                .statut(StatutDemande.ACCEPTEE)
                 .medecin(medecin)
                 .dateConsultation(LocalDate.of(2026, 10, 15))
                 .heureConsultation(LocalTime.of(14, 30))
@@ -99,7 +99,7 @@ class MedecinServiceTest {
     }
 
     @Test
-    @DisplayName("CARE-302 : Étanchéité stricte - Le médecin ne voit que ses rendez-vous validés")
+    @DisplayName("CARE-302 : Étanchéité stricte - Le médecin ne voit que ses rendez-vous acceptés")
     void getPlanningMedecin_Succes() {
         LocalDate date = LocalDate.of(2026, 10, 15);
         when(medecinRepository.existsByMatricule("MED-007")).thenReturn(true);
@@ -123,7 +123,7 @@ class MedecinServiceTest {
         ConsultationPlanningDto result = medecinService.pointerPresence(50L, request);
 
         assertThat(result.getStatutPresence()).isEqualTo(StatutPresence.PRESENT);
-        assertThat(rdvValide.getStatut()).isEqualTo(StatutDemande.TERMINEE);
+        assertThat(rdvValide.getStatut()).isEqualTo(StatutDemande.ACCEPTEE);
         assertThat(rdvValide.getDatePointage()).isNotNull();
 
         verify(demandeRdvRepository).save(rdvValide);

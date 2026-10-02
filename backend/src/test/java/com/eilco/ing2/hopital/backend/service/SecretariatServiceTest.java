@@ -57,7 +57,7 @@ class SecretariatServiceTest {
                 .departement("Services Cardiologiques")
                 .specialite("Cardiologie interventionnelle")
                 .dateSouhaitee(LocalDate.now().plusDays(4))
-                .statut(StatutDemande.EN_COURS)
+                .statut(StatutDemande.EN_ATTENTE)
                 .dateCreation(LocalDateTime.now())
                 .build();
 
@@ -73,14 +73,14 @@ class SecretariatServiceTest {
     }
 
     @Test
-    @DisplayName("CARE-203 : Doit passer une demande au statut 'Analysée'")
+    @DisplayName("CARE-203 : Doit passer une demande au statut 'En attente'")
     void passerEnAnalysee_Succes() {
         when(demandeRdvRepository.findById(10L)).thenReturn(Optional.of(demande));
         when(demandeRdvRepository.save(any(DemandeRdv.class))).thenAnswer(i -> i.getArgument(0));
 
         DemandeRdvAdminDto result = secretariatService.passerEnAnalysee(10L);
 
-        assertThat(result.getStatut()).isEqualTo(StatutDemande.ANALYSEE);
+        assertThat(result.getStatut()).isEqualTo(StatutDemande.EN_ATTENTE);
         verify(demandeRdvRepository).save(demande);
     }
 
@@ -93,7 +93,7 @@ class SecretariatServiceTest {
         RefusDemandeRequestDto refusDto = new RefusDemandeRequestDto("Dossier incomplet et créneaux indisponibles");
         DemandeRdvAdminDto result = secretariatService.refuserDemande(10L, refusDto);
 
-        assertThat(result.getStatut()).isEqualTo(StatutDemande.REFUSEE);
+        assertThat(result.getStatut()).isEqualTo(StatutDemande.DECLINEE);
         assertThat(result.getMotifRefus()).isEqualTo("Dossier incomplet et créneaux indisponibles");
     }
 
@@ -120,7 +120,7 @@ class SecretariatServiceTest {
 
         // Simulation : le médecin a déjà une consultation sur ce créneau
         when(demandeRdvRepository.existsByMedecinIdAndDateConsultationAndHeureConsultationAndStatutAndIdNot(
-                1L, date, heure, StatutDemande.VALIDEE, 10L
+                1L, date, heure, StatutDemande.ACCEPTEE, 10L
         )).thenReturn(true);
 
         AffectationMedecinRequestDto affectation = new AffectationMedecinRequestDto(1L, date, heure);
@@ -131,7 +131,7 @@ class SecretariatServiceTest {
     }
 
     @Test
-    @DisplayName("CARE-206 : Doit affecter le médecin libre et passer la demande au statut 'Validée'")
+    @DisplayName("CARE-206 : Doit affecter le médecin libre et passer la demande au statut 'Acceptée'")
     void affecterMedecin_Succes() {
         LocalDate date = LocalDate.now().plusDays(2);
         LocalTime heure = LocalTime.of(15, 0);
@@ -139,14 +139,14 @@ class SecretariatServiceTest {
         when(demandeRdvRepository.findById(10L)).thenReturn(Optional.of(demande));
         when(medecinRepository.findById(1L)).thenReturn(Optional.of(medecinCardio));
         when(demandeRdvRepository.existsByMedecinIdAndDateConsultationAndHeureConsultationAndStatutAndIdNot(
-                1L, date, heure, StatutDemande.VALIDEE, 10L
+                1L, date, heure, StatutDemande.ACCEPTEE, 10L
         )).thenReturn(false);
         when(demandeRdvRepository.save(any(DemandeRdv.class))).thenAnswer(i -> i.getArgument(0));
 
         AffectationMedecinRequestDto affectation = new AffectationMedecinRequestDto(1L, date, heure);
         DemandeRdvAdminDto result = secretariatService.affecterMedecin(10L, affectation);
 
-        assertThat(result.getStatut()).isEqualTo(StatutDemande.VALIDEE);
+        assertThat(result.getStatut()).isEqualTo(StatutDemande.ACCEPTEE);
         assertThat(result.getMedecinId()).isEqualTo(1L);
         assertThat(result.getDateConsultation()).isEqualTo(date);
         assertThat(result.getHeureConsultation()).isEqualTo(heure);

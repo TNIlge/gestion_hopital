@@ -82,7 +82,7 @@ public class DemandeRdv {
     @PrePersist
     public void prePersist() {
         if (this.statut == null) {
-            this.statut = StatutDemande.EN_COURS;
+            this.statut = StatutDemande.EN_ATTENTE;
         }
         if (this.statutPresence == null) {
             this.statutPresence = StatutPresence.NON_DEFINI;

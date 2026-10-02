@@ -46,7 +46,7 @@ public interface DemandeRdvRepository extends JpaRepository<DemandeRdv, Long>, J
      * CARE-302 : Planning strict médecin pour une date donnée.
      * Étanchéité absolue : seules les demandes 'Validée' ou 'Terminée' pour ce médecin sont retournées.
      */
-    @Query("SELECT d FROM DemandeRdv d WHERE d.medecin.matricule = :matricule AND (d.statut = 'VALIDEE' OR d.statut = 'TERMINEE') AND d.dateConsultation = :date ORDER BY d.heureConsultation ASC")
+    @Query("SELECT d FROM DemandeRdv d WHERE d.medecin.matricule = :matricule AND d.statut = 'ACCEPTEE' AND d.dateConsultation = :date ORDER BY d.heureConsultation ASC")
     List<DemandeRdv> findPlanningByMedecinAndDate(
             @Param("matricule") String matricule,
             @Param("date") LocalDate date
@@ -55,7 +55,7 @@ public interface DemandeRdvRepository extends JpaRepository<DemandeRdv, Long>, J
     /**
      * CARE-302 : Planning global médecin (toutes les consultations validées).
      */
-    @Query("SELECT d FROM DemandeRdv d WHERE d.medecin.matricule = :matricule AND (d.statut = 'VALIDEE' OR d.statut = 'TERMINEE') ORDER BY d.dateConsultation ASC, d.heureConsultation ASC")
+    @Query("SELECT d FROM DemandeRdv d WHERE d.medecin.matricule = :matricule AND d.statut = 'ACCEPTEE' ORDER BY d.dateConsultation ASC, d.heureConsultation ASC")
     List<DemandeRdv> findAllPlanningByMedecin(
             @Param("matricule") String matricule
     );
