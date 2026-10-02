@@ -13,6 +13,20 @@ import { RouterLink } from '@angular/router';
 import { appointmentService } from '../services/appointment';
 import { AppointmentRequest } from '../models/appointment-request';
 
+export interface ConfirmedAppointment {
+  numeroDossier: string;
+  nom: string;
+  prenom: string;
+  dateNaissance: string;
+  nssMasque: string;
+  departement: string;
+  specialite: string;
+  dateSouhaitee: string;
+  motif: string;
+  dateCreation?: string;
+  statut?: string;
+}
+
 @Component({
   selector: 'app-appointment',
   standalone: true,
@@ -31,6 +45,10 @@ export class Appointment implements OnInit {
   loadingSpecialties = false;
   numeroDossier?: string;
   submitting = false;
+
+  // Données de confirmation affichées après succès
+  confirmedAppointment?: ConfirmedAppointment;
+  dossierCopie = false;
 
   constructor(
     private fb: FormBuilder,
@@ -62,11 +80,12 @@ export class Appointment implements OnInit {
     this.setupDepartmentChangeListener();
   }
 
-  // 1. Appel API pur pour charger les départements depuis le backend (sans fallback en dur)
+  // 1. Appel API pur pour charger les départements depuis le backend Spring Boot
   loadDepartments(): void {
     this.appointmentService.getDepartments().subscribe({
       next: (data) => {
         this.departments = data;
+        this.errorMessage = '';
       },
       error: (error) => {
         this.errorMessage = "Impossible de charger les départements depuis le serveur.";
@@ -138,7 +157,26 @@ export class Appointment implements OnInit {
     return null;
   };
 
-  // 4. Soumission du formulaire
+  // 4. Masquage sécurisé du numéro de sécurité sociale pour affichage écran
+  masquerNss(nss: string): string {
+    if (!nss) return '••••••••';
+    const parts = nss.split('-');
+    if (parts.length === 3) {
+      const nom = parts[0];
+      const prenom = parts[1];
+      const date = parts[2];
+      const nomMasque = nom.length > 2 ? nom.substring(0, 2) + '••••' : '••••';
+      const prenomMasque = prenom.length > 2 ? prenom.substring(0, 2) + '••••' : '••••';
+      const dateMasquee = '••••' + date.slice(-4);
+      return `${nomMasque}-${prenomMasque}-${dateMasquee}`;
+    }
+    if (nss.length > 4) {
+      return '•••• •••• •••• ' + nss.slice(-4);
+    }
+    return '••••••••';
+  }
+
+  // 5. Soumission du formulaire
   submit(): void {
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
@@ -165,11 +203,29 @@ export class Appointment implements OnInit {
     this.appointmentService.createAppointment(payload).subscribe({
       next: (response) => {
         this.submitting = false;
-        this.numeroDossier = response?.numeroDossier;
+        const numDossier = response?.numeroDossier || 'RDV-' + new Date().getFullYear() + '-VALIDE';
+        this.numeroDossier = numDossier;
         this.successMessage =
           response?.message || "Votre demande de rendez-vous a été enregistrée avec succès !";
+
+        // Génère l'objet de confirmation pour l'écran récapitulatif
+        this.confirmedAppointment = {
+          numeroDossier: numDossier,
+          nom: payload.nom,
+          prenom: payload.prenom,
+          dateNaissance: payload.dateNaissance,
+          nssMasque: this.masquerNss(payload.numeroSecuriteSociale),
+          departement: payload.departement,
+          specialite: payload.specialite,
+          dateSouhaitee: payload.dateSouhaitee,
+          motif: payload.motif || 'Consultation médicale',
+          dateCreation: response?.dateCreation || new Date().toISOString(),
+          statut: response?.statut || 'En attente de validation',
+        };
+
         this.appointmentForm.reset();
         this.specialties = [];
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       },
       error: (error) => {
         this.submitting = false;
@@ -184,6 +240,31 @@ export class Appointment implements OnInit {
         console.error("Erreur soumission", error);
       },
     });
+  }
+
+  // 6. Réinitialisation pour nouveau rendez-vous
+  nouveauRendezVous(): void {
+    this.confirmedAppointment = undefined;
+    this.numeroDossier = undefined;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.appointmentForm.reset();
+    this.specialties = [];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 7. Copier le numéro de dossier
+  copierNumeroDossier(): void {
+    if (this.confirmedAppointment?.numeroDossier) {
+      navigator.clipboard?.writeText(this.confirmedAppointment.numeroDossier);
+      this.dossierCopie = true;
+      setTimeout(() => (this.dossierCopie = false), 2500);
+    }
+  }
+
+  // 8. Imprimer la confirmation
+  imprimerRecapitulatif(): void {
+    window.print();
   }
 
   private normaliserChaine(str: string): string {

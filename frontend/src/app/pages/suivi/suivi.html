@@ -1,0 +1,369 @@
+<!-- Topbar moderne avec retour -->
+<header class="suivi-topbar">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a routerLink="/" class="btn-return-modern">
+      <span class="icon-bubble">
+        <i class="bi bi-arrow-left"></i>
+      </span>
+      <span class="return-text">Retour à l'accueil</span>
+    </a>
+
+    <a routerLink="/" class="d-flex align-items-center gap-2 text-decoration-none">
+      <div class="logo-slot-compact">
+        <img src="assets/images/logo.svg" alt="MediCare Logo">
+      </div>
+      <div class="brand-text-compact">Medi<span>Care</span></div>
+    </a>
+
+    <a routerLink="/demande" class="btn btn-outline-brand-sm d-none d-sm-inline-flex">
+      <i class="bi bi-plus-circle me-1"></i> Nouveau RDV
+    </a>
+  </div>
+</header>
+
+<main class="suivi-main-section py-5">
+  <div class="container">
+    <div class="suivi-container">
+
+      <!-- EN-TÊTE ET BARRE DE RECHERCHE DU DOSSIER -->
+      <div class="suivi-search-card mb-4 animate-fade-in">
+        <div class="card-accent-line"></div>
+        <div class="p-4 p-md-5 text-center">
+          <div class="badge-eyebrow-pill mb-3">
+            <i class="bi bi-shield-lock-fill me-1"></i> SUIVI EN TEMPS RÉEL
+          </div>
+          <h1 class="page-title mb-2">Suivre l'État de Votre Rendez-vous</h1>
+          <p class="page-subtitle text-muted mb-4 mx-auto">
+            Saisissez votre numéro de suivi unique (ex: <code>RDV-202610-8A7F1B</code>) pour consulter en direct l'avancement de votre dossier.
+          </p>
+
+          <!-- Formulaire de recherche -->
+          <form (ngSubmit)="rechercher()" class="search-form-wrap mx-auto">
+            <div class="input-group input-group-search-modern">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search text-brand"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control form-control-search font-monospace border-start-0 border-end-0"
+                placeholder="Ex: RDV-202610-8A7F1B"
+                [(ngModel)]="numeroRecherche"
+                name="numeroRecherche"
+                autocomplete="off"
+                [disabled]="loading"
+              />
+              <button
+                type="submit"
+                class="btn btn-search-action"
+                [disabled]="loading || !numeroRecherche.trim()"
+              >
+                @if (loading) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Recherche...
+                } @else {
+                  <span>Consulter</span>
+                  <i class="bi bi-arrow-right ms-2"></i>
+                }
+              </button>
+            </div>
+          </form>
+
+          <!-- Alerte d'erreur -->
+          @if (errorMessage) {
+            <div class="alert alert-danger-modern mt-4 text-start d-flex align-items-center gap-3 animate-fade-in" role="alert">
+              <div class="alert-icon-wrap">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-bold">Information</div>
+                <div>{{ errorMessage }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           RÉSULTAT DU SUIVI DE DOSSIER
+           ===================================================================== -->
+      @if (demande) {
+        <div class="suivi-result-card animate-fade-in">
+          <div
+            [ngClass]="{
+              'card-accent-line-pending': statutDossier === 'EN_ATTENTE',
+              'card-accent-line-success': statutDossier === 'ACCEPTEE',
+              'card-accent-line-declined': statutDossier === 'DECLINEE',
+              'card-accent-line-expired': statutDossier === 'DEPASSEE'
+            }"
+          ></div>
+
+          <div class="p-4 p-md-5">
+            <!-- Header du dossier : Numéro + Statut Badge + Bouton Refresh -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+              <div>
+                <span class="text-muted small text-uppercase fw-semibold d-block">Dossier médical unique</span>
+                <span class="dossier-number-badge font-monospace">{{ demande.numeroDossier }}</span>
+              </div>
+
+              <div class="d-flex align-items-center gap-3">
+                <!-- Badge Statut -->
+                @if (statutDossier === 'EN_ATTENTE') {
+                  <span class="badge-status-lg badge-status-pending">
+                    <span class="pulse-dot-pending"></span> En cours d'analyse
+                  </span>
+                } @else if (statutDossier === 'ACCEPTEE') {
+                  <span class="badge-status-lg badge-status-validated">
+                    <i class="bi bi-check-circle-fill me-1"></i> Validée
+                  </span>
+                } @else if (statutDossier === 'DECLINEE') {
+                  <span class="badge-status-lg badge-status-declined">
+                    <i class="bi bi-x-circle-fill me-1"></i> Refusée
+                  </span>
+                } @else if (statutDossier === 'DEPASSEE') {
+                  <span class="badge-status-lg badge-status-expired">
+                    <i class="bi bi-clock-history me-1"></i> Dépassée (+15 min)
+                  </span>
+                }
+
+                <!-- Bouton Actualiser en temps réel -->
+                <button
+                  type="button"
+                  class="btn-refresh-status"
+                  (click)="actualiser()"
+                  [title]="'Actualiser le statut du dossier'"
+                  [disabled]="loading"
+                >
+                  <i class="bi bi-arrow-clockwise" [class.spin-anim]="loading"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Fil d'étapes (Timeline d'avancement) -->
+            <div class="timeline-stepper mb-5">
+              <!-- Étape 1 : Demande enregistrée -->
+              <div class="timeline-step completed">
+                <div class="timeline-icon"><i class="bi bi-file-earmark-check-fill"></i></div>
+                <div class="timeline-content">
+                  <span class="timeline-label">1. Demande enregistrée</span>
+                  <span class="timeline-time">{{ demande.dateCreation | slice:0:10 }}</span>
+                </div>
+              </div>
+
+              <div
+                class="timeline-connector"
+                [class.active]="statutDossier !== 'EN_ATTENTE'"
+              ></div>
+
+              <!-- Étape 2 : Analyse par le secrétariat -->
+              <div
+                class="timeline-step"
+                [ngClass]="{
+                  'active-current': statutDossier === 'EN_ATTENTE',
+                  'completed': statutDossier === 'ACCEPTEE' || statutDossier === 'DECLINEE' || statutDossier === 'DEPASSEE'
+                }"
+              >
+                <div class="timeline-icon">
+                  @if (statutDossier === 'EN_ATTENTE') {
+                    <i class="bi bi-hourglass-split"></i>
+                  } @else {
+                    <i class="bi bi-check2"></i>
+                  }
+                </div>
+                <div class="timeline-content">
+                  <span class="timeline-label">2. Traitement secrétariat</span>
+                  <span class="timeline-time">
+                    {{ statutDossier === 'EN_ATTENTE' ? 'En cours d\'étude' : 'Analysée' }}
+                  </span>
+                </div>
+              </div>
+
+              <div
+                class="timeline-connector"
+                [class.active]="statutDossier === 'ACCEPTEE' || statutDossier === 'DECLINEE' || statutDossier === 'DEPASSEE'"
+              ></div>
+
+              <!-- Étape 3 : Décision finale -->
+              <div
+                class="timeline-step"
+                [ngClass]="{
+                  'active-success': statutDossier === 'ACCEPTEE',
+                  'active-declined': statutDossier === 'DECLINEE',
+                  'active-expired': statutDossier === 'DEPASSEE'
+                }"
+              >
+                <div class="timeline-icon">
+                  @if (statutDossier === 'ACCEPTEE') {
+                    <i class="bi bi-calendar-check-fill"></i>
+                  } @else if (statutDossier === 'DECLINEE') {
+                    <i class="bi bi-x-circle-fill"></i>
+                  } @else if (statutDossier === 'DEPASSEE') {
+                    <i class="bi bi-hourglass-bottom"></i>
+                  } @else {
+                    <i class="bi bi-circle"></i>
+                  }
+                </div>
+                <div class="timeline-content">
+                  <span class="timeline-label">3. Décision &amp; Consultation</span>
+                  <span class="timeline-time">
+                    @if (statutDossier === 'ACCEPTEE') { Validée }
+                    @else if (statutDossier === 'DECLINEE') { Refusée }
+                    @else if (statutDossier === 'DEPASSEE') { Dépassée }
+                    @else { En attente }
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ENCART SPÉCIFIQUE SELON LE STATUT -->
+            <!-- 1. CAS EN ATTENTE -->
+            @if (statutDossier === 'EN_ATTENTE') {
+              <div class="status-explanation-card explanation-pending mb-4">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="explanation-icon text-warning">
+                    <i class="bi bi-info-circle-fill"></i>
+                  </div>
+                  <div>
+                    <h4 class="explanation-title mb-1 text-dark">Demande en cours d'analyse</h4>
+                    <p class="explanation-text text-muted mb-0">
+                      Votre demande a bien été réceptionnée. Les secrétaires médicales sont en train de vérifier les disponibilités de nos praticiens pour vous affecter un créneau adapté.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- 2. CAS ACCEPTÉE / VALIDÉE -->
+            @if (statutDossier === 'ACCEPTEE') {
+              <div class="status-explanation-card explanation-success mb-4">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="explanation-icon text-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h4 class="explanation-title mb-1 text-success">Rendez-vous validé et confirmé !</h4>
+                    <p class="explanation-text text-muted mb-3">
+                      Un praticien vous a été officiellement assigné. Veuillez noter les détails ci-dessous :
+                    </p>
+
+                    <div class="row g-3">
+                      @if (demande.medecinNom) {
+                        <div class="col-sm-6">
+                          <div class="info-pill-box">
+                            <span class="info-pill-label"><i class="bi bi-person-badge me-1"></i> Médecin traitant</span>
+                            <strong class="info-pill-value text-brand">{{ demande.medecinNom }}</strong>
+                          </div>
+                        </div>
+                      }
+                      @if (demande.dateConsultation) {
+                        <div class="col-sm-6">
+                          <div class="info-pill-box highlight-pill">
+                            <span class="info-pill-label"><i class="bi bi-calendar-event me-1"></i> Date &amp; Heure de consultation</span>
+                            <strong class="info-pill-value text-success">
+                              {{ demande.dateConsultation }} à {{ demande.heureConsultation || 'Heure à confirmer' }}
+                            </strong>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- 3. CAS REFUSÉE / DÉCLINÉE -->
+            @if (statutDossier === 'DECLINEE') {
+              <div class="status-explanation-card explanation-danger mb-4">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="explanation-icon text-danger">
+                    <i class="bi bi-x-octagon-fill"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h4 class="explanation-title mb-1 text-danger">Demande de rendez-vous non retenue</h4>
+                    <p class="explanation-text text-muted mb-2">
+                      Le secrétariat médical n'a pas pu valider votre demande pour le motif suivant :
+                    </p>
+                    <div class="motif-refus-card p-3 rounded-3 bg-white border border-danger-subtle">
+                      <strong class="text-danger d-block mb-1">Motif indiqué par le secrétariat :</strong>
+                      <span class="text-dark">{{ demande.motifRefus || 'Créneau indisponible ou réorientation vers un autre service requise.' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- 4. CAS DÉPASSÉE (+15 minutes) -->
+            @if (statutDossier === 'DEPASSEE') {
+              <div class="status-explanation-card explanation-expired mb-4">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="explanation-icon text-secondary">
+                    <i class="bi bi-clock-history"></i>
+                  </div>
+                  <div>
+                    <h4 class="explanation-title mb-1 text-dark">Rendez-vous dépassé (+15 minutes)</h4>
+                    <p class="explanation-text text-muted mb-0">
+                      L'horaire prévu pour cette consultation est dépassé de plus de 15 minutes. Ce dossier est désormais clôturé. Si vous souhaitez planifier une nouvelle consultation, merci de déposer une nouvelle demande.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- RÉCAPITULATIF DES DÉTAILS DU DOSSIER -->
+            <div class="recap-table-box mb-4">
+              <h5 class="recap-box-title mb-3">
+                <i class="bi bi-clipboard2-pulse me-2 text-brand"></i>Détails enregistrés de la demande
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <span class="detail-label">Patient</span>
+                    <strong class="detail-value">{{ demande.prenom }} {{ demande.nom }}</strong>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <span class="detail-label">Département médical</span>
+                    <span class="detail-value">{{ demande.departement }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <span class="detail-label">Spécialité</span>
+                    <span class="detail-value">{{ demande.specialite }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <span class="detail-label">Date souhaitée</span>
+                    <strong class="detail-value text-brand">{{ demande.dateSouhaitee }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER D'ACTIONS -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3 border-top">
+              <div class="text-muted small">
+                @if (derniereActualisation) {
+                  <span>Actualisé à {{ derniereActualisation | date:'HH:mm:ss' }}</span>
+                }
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-brand-sm" (click)="actualiser()">
+                  <i class="bi bi-arrow-clockwise me-1"></i> Actualiser le statut
+                </button>
+                <a routerLink="/demande" class="btn btn-brand-sm">
+                  <i class="bi bi-plus-circle me-1"></i> Nouveau rendez-vous
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</main>

@@ -26,5 +26,35 @@ services:
       - postgres-db
     restart: unless-stopped
 
+  # 3. Application Backend (Spring Boot Java 21)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-mon-org}/gestion_hopital-backend:latest
+    container_name: hospital_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/hospital_db
+      SPRING_DATASOURCE_USERNAME: hospital_user
+      SPRING_DATASOURCE_PASSWORD: hospital_password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-db
+    restart: unless-stopped
+
+  # 4. Application Frontend (Angular 19 + Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-mon-org}/gestion_hopital-frontend:latest
+    container_name: hospital_frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   postgres_data:

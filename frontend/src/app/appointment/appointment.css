@@ -463,3 +463,453 @@
     display: none;
   }
 }
+
+/* ==========================================================================
+   ÉCRAN DE CONFIRMATION (CARE - POST VALIDATION RDV)
+   ========================================================================== */
+
+.card-accent-line-success {
+  height: 6px;
+  background: linear-gradient(90deg, #16a34a, #22c55e, #0f6e78);
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.success-icon-animation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-circle-outer {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(22, 163, 74, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-success 2.5s infinite;
+}
+
+.success-circle-inner {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4);
+}
+
+@keyframes pulse-success {
+  0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+  70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); }
+  100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+.badge-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-status-success {
+  background: rgba(22, 163, 74, 0.1);
+  color: #15803d;
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+/* Étapes complétées */
+.steps-progress-bar .step-item.completed .step-circle {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.steps-progress-bar .step-item.active-success .step-circle {
+  background: var(--brand, #0f6e78);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 110, 120, 0.35);
+}
+
+.steps-progress-bar .step-line.active {
+  background: #16a34a;
+}
+
+/* Carte héro Numéro de Dossier */
+.dossier-hero-card {
+  background: linear-gradient(135deg, #f0fafb 0%, #e6f4f5 100%);
+  border: 1.5px dashed rgba(15, 110, 120, 0.3);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  box-shadow: 0 6px 20px rgba(15, 110, 120, 0.05);
+}
+
+.dossier-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.dossier-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink, #1f2a30);
+  display: flex;
+  align-items: center;
+}
+
+.status-badge-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.dot-pending {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+.dossier-hero-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 0.85rem;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid rgba(15, 110, 120, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  margin-bottom: 0.75rem;
+}
+
+.dossier-number {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--brand, #0f6e78);
+  letter-spacing: 0.06em;
+}
+
+.btn-copy-dossier {
+  background: rgba(15, 110, 120, 0.08);
+  color: var(--brand, #0f6e78);
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-copy-dossier:hover {
+  background: var(--brand, #0f6e78);
+  color: #ffffff;
+}
+
+.dossier-hero-footer {
+  font-size: 0.825rem;
+  color: var(--muted, #64748b);
+}
+
+/* Grille récapitulative des données */
+.recap-grid-card {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(15, 110, 120, 0.1);
+  padding: 1.75rem;
+}
+
+.recap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(15, 110, 120, 0.08);
+}
+
+.recap-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink, #1f2a30);
+}
+
+.recap-box {
+  background: #fbfdfd;
+  border: 1px solid #eaf2f3;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.recap-box:hover {
+  background: #f6fbfc;
+  border-color: rgba(15, 110, 120, 0.2);
+}
+
+.recap-box.highlight-box {
+  background: #f0fafb;
+  border-color: rgba(15, 110, 120, 0.25);
+}
+
+.recap-label {
+  font-size: 0.78rem;
+  color: var(--muted, #64748b);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.25rem;
+}
+
+.recap-value {
+  font-size: 0.95rem;
+  color: var(--ink, #1f2a30);
+  word-break: break-word;
+}
+
+/* Badge N° SS Masqué */
+.badge-masked-confidential {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: rgba(15, 110, 120, 0.1);
+  color: var(--brand, #0f6e78);
+}
+
+.text-masked {
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--ink, #1f2a30);
+}
+
+/* Carte de recommandations */
+.instructions-card {
+  background: #f8fafc;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.25rem 1.5rem;
+}
+
+.instructions-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.instructions-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink, #1f2a30);
+}
+
+.instructions-list {
+  padding-left: 1.2rem;
+  line-height: 1.6;
+}
+
+/* Actions footer de confirmation */
+.confirmation-actions-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid rgba(15, 110, 120, 0.1);
+}
+
+@media (min-width: 576px) {
+  .confirmation-actions-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.btn-print-modern {
+  background: #ffffff;
+  color: var(--ink, #1f2a30);
+  border: 1.5px solid rgba(15, 110, 120, 0.2);
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-print-modern:hover {
+  background: #f0fafb;
+  border-color: var(--brand, #0f6e78);
+  color: var(--brand, #0f6e78);
+}
+
+.btn-new-appointment {
+  background: rgba(15, 110, 120, 0.1);
+  color: var(--brand, #0f6e78);
+  border: none;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-new-appointment:hover {
+  background: rgba(15, 110, 120, 0.18);
+  color: var(--brand-hover, #0b535b);
+  transform: translateY(-1px);
+}
+
+.btn-home-modern {
+  background: var(--brand, #0f6e78);
+  color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.5rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(15, 110, 120, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-home-modern:hover {
+  background: var(--brand-hover, #0b535b);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 110, 120, 0.35);
+}
+
+/* Bloc accès rapide suivi de demande */
+.suivi-access-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px solid rgba(22, 163, 74, 0.25);
+  border-radius: 1.15rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.suivi-access-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(22, 163, 74, 0.15);
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.suivi-access-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink, #1f2a30);
+}
+
+.btn-track-appointment {
+  background: #16a34a;
+  color: #ffffff;
+  padding: 0.65rem 1.4rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  white-space: nowrap;
+}
+
+.btn-track-appointment:hover {
+  background: #15803d;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
+}
+
+.btn-track-outline-modern {
+  background: rgba(22, 163, 74, 0.08);
+  color: #15803d;
+  border: 1.5px solid rgba(22, 163, 74, 0.3);
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.35rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-track-outline-modern:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+/* ==========================================================================
+   IMPRESSION (CTRL+P / BOUTON IMPRIMER)
+   ========================================================================== */
+@media print {
+  .appointment-topbar,
+  .confirmation-actions-footer,
+  .btn-copy-dossier,
+  .steps-progress-bar {
+    display: none !important;
+  }
+
+  .appointment-main-section {
+    background: #ffffff !important;
+    padding: 0 !important;
+  }
+
+  .appointment-card-wrapper {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .dossier-hero-card {
+    background: #f8fafc !important;
+    border: 1px solid #94a3b8 !important;
+  }
+}
+

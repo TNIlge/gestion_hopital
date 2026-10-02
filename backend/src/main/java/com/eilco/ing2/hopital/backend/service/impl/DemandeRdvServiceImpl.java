@@ -74,9 +74,17 @@ public class DemandeRdvServiceImpl implements DemandeRdvService {
         DemandeRdv demande = demandeRdvRepository.findByNumeroDossier(numeroDossier.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Aucun dossier trouvé pour le numéro de suivi : " + numeroDossier));
 
+        String statutAffiche = demande.getStatut().getLibelle();
+        if (demande.getStatut() == StatutDemande.ACCEPTEE && demande.getDateConsultation() != null && demande.getHeureConsultation() != null) {
+            LocalDateTime finCreneau = LocalDateTime.of(demande.getDateConsultation(), demande.getHeureConsultation()).plusMinutes(15);
+            if (LocalDateTime.now().isAfter(finCreneau)) {
+                statutAffiche = "Dépassée";
+            }
+        }
+
         SuiviDemandeResponseDto.SuiviDemandeResponseDtoBuilder builder = SuiviDemandeResponseDto.builder()
                 .numeroDossier(demande.getNumeroDossier())
-                .statut(demande.getStatut().getLibelle())
+                .statut(statutAffiche)
                 .nom(demande.getNom())
                 .prenom(demande.getPrenom())
                 .departement(demande.getDepartement())
