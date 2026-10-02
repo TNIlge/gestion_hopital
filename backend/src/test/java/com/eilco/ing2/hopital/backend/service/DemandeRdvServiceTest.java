@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,12 +22,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DemandeRdvServiceTest {
@@ -47,41 +46,49 @@ class DemandeRdvServiceTest {
                 .dateNaissance(LocalDate.of(1995, 10, 24))
                 .numeroSecuriteSociale("dupont-jean-19951024")
                 .departement("Services Cardiologiques")
-                .specialite("Cardiologie interventionnelle")
-                .dateSouhaitee(LocalDate.now().plusDays(5))
+                .specialite("Rythmologie cardiaque")
+                .dateSouhaitee(LocalDate.of(2026, 11, 15))
                 .motif("Consultation de routine")
                 .build();
     }
 
     @Test
-    @DisplayName("CARE-103 : Doit enregistrer une demande avec statut 'En cours' et numéro unique")
-    void creerDemandeRdv_Succes() {
+    @DisplayName("Création nominale : statut initial 'En attente' et identifiant unique généré")
+    void shouldCreateDemandeWithStatusEnAttente() {
         when(demandeRdvRepository.existsByNumeroDossier(anyString())).thenReturn(false);
         when(demandeRdvRepository.save(any(DemandeRdv.class))).thenAnswer(invocation -> {
-            DemandeRdv d = invocation.getArgument(0);
-            d.setId(1L);
-            d.setDateCreation(LocalDateTime.now());
-            return d;
+            DemandeRdv entity = invocation.getArgument(0);
+            entity.setId(1L);
+            entity.setDateCreation(LocalDateTime.now());
+            return entity;
         });
 
         DemandeRdvResponseDto response = demandeRdvService.creerDemandeRdv(validRequest);
 
-        assertThat(response).isNotNull();
-        assertThat(response.getNumeroDossier()).startsWith("RDV-");
-        assertThat(response.getStatut()).isEqualTo("En cours");
-        assertThat(response.getNom()).isEqualTo("Dupont");
-        assertThat(response.getPrenom()).isEqualTo("Jean");
+        assertNotNull(response);
+        assertNotNull(response.getNumeroDossier());
+        assertTrue(response.getNumeroDossier().startsWith("RDV-"));
+        assertEquals("En attente", response.getStatut());
+        assertEquals("Dupont", response.getNom());
+        assertEquals("Jean", response.getPrenom());
 
-        verify(demandeRdvRepository).save(any(DemandeRdv.class));
+        ArgumentCaptor<DemandeRdv> captor = ArgumentCaptor.forClass(DemandeRdv.class);
+        verify(demandeRdvRepository, times(1)).save(captor.capture());
+        DemandeRdv saved = captor.getValue();
+        assertEquals(StatutDemande.EN_ATTENTE, saved.getStatut());
+        assertEquals("dupont-jean-19951024", saved.getNumeroSecuriteSociale());
     }
 
     @Test
-    @DisplayName("CARE-102 : Doit rejeter la création si le N° SS ne correspond pas au Nom/Prénom")
-    void creerDemandeRdv_NssInvalide_DoitEchouer() {
-        validRequest.setNumeroSecuriteSociale("autre-personne-19951024");
+    @DisplayName("Blocage si le N° SS ne correspond pas au format nom-prenom-YYYYMMDD")
+    void shouldThrowExceptionWhenNssIsInvalid() {
+        validRequest.setNumeroSecuriteSociale("martin-pierre-19800101");
 
-        assertThatThrownBy(() -> demandeRdvService.creerDemandeRdv(validRequest))
-                .isInstanceOf(InvalidNssException.class);
+        assertThrows(InvalidNssException.class, () -> {
+            demandeRdvService.creerDemandeRdv(validRequest);
+        });
+
+        verify(demandeRdvRepository, never()).save(any());
     }
 
     @Test
@@ -92,9 +99,9 @@ class DemandeRdvServiceTest {
                 .numeroDossier("RDV-202610-TEST01")
                 .nom("Dupont")
                 .prenom("Jean")
-                .statut(StatutDemande.EN_COURS)
+                .statut(StatutDemande.EN_ATTENTE)
                 .departement("Services Cardiologiques")
-                .specialite("Cardiologie interventionnelle")
+                .specialite("Rythmologie cardiaque")
                 .dateSouhaitee(LocalDate.now().plusDays(2))
                 .dateCreation(LocalDateTime.now())
                 .build();
@@ -104,9 +111,9 @@ class DemandeRdvServiceTest {
 
         SuiviDemandeResponseDto suivi = demandeRdvService.getSuiviDemande("RDV-202610-TEST01");
 
-        assertThat(suivi).isNotNull();
-        assertThat(suivi.getNumeroDossier()).isEqualTo("RDV-202610-TEST01");
-        assertThat(suivi.getStatut()).isEqualTo("En cours");
+        assertNotNull(suivi);
+        assertEquals("RDV-202610-TEST01", suivi.getNumeroDossier());
+        assertEquals("En attente", suivi.getStatut());
     }
 
     @Test
@@ -115,7 +122,8 @@ class DemandeRdvServiceTest {
         when(demandeRdvRepository.findByNumeroDossier("RDV-INEXISTANT"))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> demandeRdvService.getSuiviDemande("RDV-INEXISTANT"))
-                .isInstanceOf(ResourceNotFoundException.class);
+        assertThrows(ResourceNotFoundException.class, () -> {
+            demandeRdvService.getSuiviDemande("RDV-INEXISTANT");
+        });
     }
 }

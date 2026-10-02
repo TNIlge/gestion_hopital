@@ -49,7 +49,7 @@ public class DemandeRdvServiceImpl implements DemandeRdvService {
                 .specialite(requestDto.getSpecialite().trim())
                 .dateSouhaitee(requestDto.getDateSouhaitee())
                 .motif(requestDto.getMotif())
-                .statut(StatutDemande.EN_COURS)
+                .statut(StatutDemande.EN_ATTENTE)
                 .build();
 
         DemandeRdv saved = demandeRdvRepository.save(entity);

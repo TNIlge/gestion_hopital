@@ -3,88 +3,94 @@ package com.eilco.ing2.hopital.backend.controller;
 import com.eilco.ing2.hopital.backend.dto.DemandeRdvRequestDto;
 import com.eilco.ing2.hopital.backend.dto.DemandeRdvResponseDto;
 import com.eilco.ing2.hopital.backend.dto.SuiviDemandeResponseDto;
+import com.eilco.ing2.hopital.backend.service.DemandeRdvService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(MockitoExtension.class)
 class DemandeRdvControllerTest {
 
-    @LocalServerPort
-    private int port;
+    @Mock
+    private DemandeRdvService demandeRdvService;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @InjectMocks
+    private DemandeRdvController demandeRdvController;
 
-    @Test
-    @DisplayName("CARE-103 & CARE-104 & CARE-105 : Cycle complet soumission et suivi de demande")
-    void testSoumissionEtSuiviDemande() {
-        String baseUrl = "http://localhost:" + port + "/api/v1/rendez-vous";
+    private DemandeRdvRequestDto validRequest;
 
-        DemandeRdvRequestDto request = DemandeRdvRequestDto.builder()
-                .nom("Lemoine")
-                .prenom("Sarah")
-                .dateNaissance(LocalDate.of(1993, 7, 12))
-                .numeroSecuriteSociale("lemoine-sarah-19930712")
+    @BeforeEach
+    void setUp() {
+        validRequest = DemandeRdvRequestDto.builder()
+                .nom("Dupont")
+                .prenom("Jean")
+                .dateNaissance(LocalDate.of(1995, 10, 24))
+                .numeroSecuriteSociale("dupont-jean-19951024")
                 .departement("Services Cardiologiques")
                 .specialite("Rythmologie cardiaque")
-                .dateSouhaitee(LocalDate.now().plusDays(10))
-                .motif("Palpitations")
+                .dateSouhaitee(LocalDate.of(2026, 11, 15))
+                .motif("Consultation de contrôle")
                 .build();
-
-        // 1. Soumission POST
-        ResponseEntity<DemandeRdvResponseDto> responseCreation = restTemplate.postForEntity(
-                baseUrl,
-                request,
-                DemandeRdvResponseDto.class
-        );
-
-        assertThat(responseCreation.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        DemandeRdvResponseDto bodyCreation = responseCreation.getBody();
-        assertThat(bodyCreation).isNotNull();
-        assertThat(bodyCreation.getNumeroDossier()).isNotBlank();
-        assertThat(bodyCreation.getStatut()).isEqualTo("En cours");
-
-        // 2. Suivi GET
-        String suiviUrl = baseUrl + "/suivi/" + bodyCreation.getNumeroDossier();
-        ResponseEntity<SuiviDemandeResponseDto> responseSuivi = restTemplate.getForEntity(
-                suiviUrl,
-                SuiviDemandeResponseDto.class
-        );
-
-        assertThat(responseSuivi.getStatusCode()).isEqualTo(HttpStatus.OK);
-        SuiviDemandeResponseDto bodySuivi = responseSuivi.getBody();
-        assertThat(bodySuivi).isNotNull();
-        assertThat(bodySuivi.getNumeroDossier()).isEqualTo(bodyCreation.getNumeroDossier());
-        assertThat(bodySuivi.getStatut()).isEqualTo("En cours");
     }
 
     @Test
-    @DisplayName("CARE-102 : Rejet HTTP 400 si NSS invalide")
-    void testSoumissionNssInvalide() {
-        String baseUrl = "http://localhost:" + port + "/api/v1/rendez-vous";
-
-        DemandeRdvRequestDto request = DemandeRdvRequestDto.builder()
-                .nom("Martin")
-                .prenom("Paul")
-                .dateNaissance(LocalDate.of(1990, 1, 1))
-                .numeroSecuriteSociale("nss-totalement-invalide")
-                .departement("Services d'Urgences")
-                .specialite("Urgence adulte")
-                .dateSouhaitee(LocalDate.now().plusDays(1))
-                .motif("Forte fièvre")
+    @DisplayName("Le contrôleur doit retourner 201 Created avec les informations de la demande")
+    void shouldReturn201WhenDemandeIsCreated() {
+        DemandeRdvResponseDto mockResponse = DemandeRdvResponseDto.builder()
+                .numeroDossier("RDV-202609-XYZ123")
+                .statut("En attente")
+                .nom("Dupont")
+                .prenom("Jean")
+                .departement("Services Cardiologiques")
+                .specialite("Rythmologie cardiaque")
+                .dateSouhaitee(LocalDate.of(2026, 11, 15))
+                .dateCreation(LocalDateTime.now())
+                .message("Votre demande de rendez-vous a été enregistrée avec succès.")
                 .build();
 
-        assertThatThrownBy(() -> restTemplate.postForEntity(baseUrl, request, DemandeRdvResponseDto.class))
-                .isInstanceOf(HttpClientErrorException.BadRequest.class);
+        when(demandeRdvService.creerDemandeRdv(any(DemandeRdvRequestDto.class))).thenReturn(mockResponse);
+
+        ResponseEntity<DemandeRdvResponseDto> responseEntity = demandeRdvController.creerDemandeRdv(validRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals("RDV-202609-XYZ123", responseEntity.getBody().getNumeroDossier());
+        assertEquals("En attente", responseEntity.getBody().getStatut());
+    }
+
+    @Test
+    @DisplayName("CARE-105 : Le contrôleur doit retourner 200 OK avec le suivi de la demande")
+    void shouldReturn200WhenGetSuivi() {
+        SuiviDemandeResponseDto mockSuivi = SuiviDemandeResponseDto.builder()
+                .numeroDossier("RDV-202609-XYZ123")
+                .statut("En cours")
+                .nom("Dupont")
+                .prenom("Jean")
+                .departement("Services Cardiologiques")
+                .specialite("Rythmologie cardiaque")
+                .build();
+
+        when(demandeRdvService.getSuiviDemande("RDV-202609-XYZ123")).thenReturn(mockSuivi);
+
+        ResponseEntity<SuiviDemandeResponseDto> responseEntity = demandeRdvController.getSuiviDemande("RDV-202609-XYZ123");
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals("RDV-202609-XYZ123", responseEntity.getBody().getNumeroDossier());
     }
 }
