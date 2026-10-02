@@ -5,10 +5,6 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { USE_MOCK } from './core/api.config';
-import { DemandeHttpService } from './core/services/demande-http.service';
-import { DemandeMockService } from './core/services/demande-mock.service';
-import { DemandeService } from './core/services/demande.service';
 
 registerLocaleData(localeFr);
 
@@ -17,7 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
-    { provide: LOCALE_ID, useValue: 'fr-FR' },
-    { provide: DemandeService, useClass: USE_MOCK ? DemandeMockService : DemandeHttpService },
+    { provide: LOCALE_ID, useValue: 'fr-FR' }
   ]
 };
