@@ -1,0 +1,131 @@
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg py-3">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
+      <span class="logo-slot">
+        @if (logoDisponible()) {
+          <img src="logo.png" alt="Logo de l'hôpital" (error)="logoDisponible.set(false)" />
+        }
+      </span>
+    </a>
+
+    <button
+      class="navbar-toggler border-0"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#menu"
+      aria-controls="menu"
+      aria-label="Ouvrir le menu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav mx-auto gap-lg-4">
+        <li class="nav-item"><a class="nav-link active" href="#accueil">Accueil</a></li>
+        <li class="nav-item"><a class="nav-link" href="#specialites">Spécialités</a></li>
+        <li class="nav-item"><a class="nav-link" href="#fonctionnement">Comment ça marche</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-brand px-4" routerLink="/suivi">Suivre ma demande</a>
+        <a class="btn btn-brand px-4" routerLink="/connexion"><i class="bi bi-person me-2"></i>Connexion</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header id="accueil" class="hero text-center">
+  <div class="container">
+    <h1 class="display-4 mx-auto mb-4">Trouvez votre médecin &amp; prenez rendez-vous</h1>
+    <p class="lead text-secondary mx-auto mb-4">
+      Déposez votre demande en quelques minutes, suivez son avancement avec votre numéro de dossier.
+      Vos données de santé restent strictement confidentielles.
+    </p>
+    <a class="btn btn-brand btn-lg px-5" routerLink="/demande">Prendre rendez-vous</a>
+
+    <div class="photos d-flex justify-content-center align-items-end">
+      <figure class="photo tilt-left"><img src="images/doctor-1.jpg" alt="Médecin" /></figure>
+      <figure class="photo photo-main"><img src="images/doctor-4.jpg" alt="Médecin" /></figure>
+      <figure class="photo tilt-right"><img src="images/doctor-3.jpg" alt="Infirmier" /></figure>
+    </div>
+  </div>
+</header>
+
+<!-- Spécialités -->
+<section id="specialites" class="section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <p class="eyebrow text-brand fw-medium mb-2">Nos services</p>
+      <h2 class="fw-semibold">Nos spécialités</h2>
+    </div>
+
+    <div class="row g-4">
+      @for (s of specialites; track s.nom) {
+        <div class="col-md-4">
+          <a class="spec-card card h-100 border-0 text-decoration-none" routerLink="/demande">
+            <div class="card-body p-4">
+              <span class="spec-icon mb-3"><i class="bi" [class]="s.icone"></i></span>
+              <h3 class="h5 fw-semibold mb-2">{{ s.nom }}</h3>
+              <p class="spec-text mb-3">{{ s.description }}</p>
+              <ul class="list-unstyled small mb-0">
+                @for (sous of s.sousSpecialites; track sous) {
+                  <li><i class="bi bi-check2 me-2"></i>{{ sous }}</li>
+                }
+              </ul>
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Fonctionnement -->
+<section id="fonctionnement" class="section bg-soft">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <img src="images/hospital.jpg" alt="Accueil de l'hôpital" class="img-fluid rounded-4 shadow-sm" />
+      </div>
+      <div class="col-lg-6">
+        <p class="eyebrow text-brand fw-medium mb-2">Simple et sécurisé</p>
+        <h2 class="fw-semibold mb-4">Comment ça marche ?</h2>
+        @for (e of etapes; track e.titre; let i = $index) {
+          <div class="d-flex gap-3 mb-4">
+            <span class="step-num">{{ i + 1 }}</span>
+            <div>
+              <h3 class="h6 fw-semibold mb-1"><i class="bi me-2 text-brand" [class]="e.icone"></i>{{ e.titre }}</h3>
+              <p class="text-secondary mb-0">{{ e.texte }}</p>
+            </div>
+          </div>
+        }
+        <a class="btn btn-brand px-4" routerLink="/demande">Commencer ma demande</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pied de page -->
+<footer id="contact" class="footer py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-5">
+        <h3 class="h6 fw-semibold text-white">Centre Hospitalier</h3>
+        <p class="small mb-0">Moderniser et sécuriser votre parcours de prise de rendez-vous.</p>
+      </div>
+      <div class="col-md-4 small">
+        <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>1 rue de l'Hôpital, 62100 Calais</p>
+        <p class="mb-1"><i class="bi bi-telephone me-2"></i>03 21 00 00 00</p>
+        <p class="mb-0"><i class="bi bi-envelope me-2"></i>contact&#64;hopital.fr</p>
+      </div>
+      <div class="col-md-3 small">
+        <p class="mb-1"><i class="bi bi-exclamation-triangle me-2"></i>Urgence vitale : <strong class="text-white">15</strong></p>
+        <p class="mb-0"><i class="bi bi-person-badge me-2"></i><a routerLink="/connexion">Espace personnel</a></p>
+      </div>
+    </div>
+    <hr class="my-4" />
+    <p class="small mb-0 text-center">&copy; {{ annee }} Projet Agile EILCO</p>
+  </div>
+</footer>
